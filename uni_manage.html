@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Certificates - University Admin | CertSure / PramaanVault</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #228a97;
+            --accent-color: #e5f7da;
+            --secondary-color: #ffe766;
+            --dark-color: #2c3e50;
+            --light-color: #f8f9fa;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: linear-gradient(180deg, var(--primary-color) 0%, #1a6b75 100%);
+            color: white;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--secondary-color);
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 12px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .user-role {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .btn-logout {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Manage Content */
+        .manage-content {
+            padding: 2rem;
+        }
+
+        .manage-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Filter and Search */
+        .filter-search-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .filter-select,
+        .search-input {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .filter-select:focus,
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(34, 138, 151, 0.25);
+            background: white;
+            outline: none;
+        }
+
+        /* Certificates Table */
+        .certificates-table {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            background: var(--accent-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            border: none;
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-color: #e9ecef;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(34, 138, 151, 0.05);
+            transform: translateX(5px);
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background: rgba(34, 138, 151, 0.02);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-verified {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-rejected {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            color: #666;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            margin: 0 0.25rem;
+        }
+
+        .btn-action:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-edit {
+            color: var(--info-color);
+        }
+
+        .btn-edit:hover {
+            background: var(--info-color);
+            color: white;
+        }
+
+        .btn-delete {
+            color: var(--danger-color);
+        }
+
+        .btn-delete:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-view {
+            color: var(--success-color);
+        }
+
+        .btn-view:hover {
+            background: var(--success-color);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 100%;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .manage-content {
+                padding: 1rem;
+            }
+
+            .filter-search-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">University Portal</div>
+            <div class="sidebar-subtitle">Government of Jharkhand</div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-item">
+                <a href="uni_dashboard.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="uni_upload.html" class="nav-link">
+                    <i class="fas fa-upload"></i>
+                    Upload Certificates
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="uni_manage.html" class="nav-link active">
+                    <i class="fas fa-cogs"></i>
+                    Manage Certificates
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="uni_reports.html" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    Reports
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="uni_settings.html" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="nav-item">
+                <a href="uni_login.html" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <span class="header-title">Certificate Database</span>
+            </div>
+            <div class="header-user">
+                <div class="user-info">
+                    <div class="user-name">University Admin</div>
+                    <div class="user-role">Educational Institution</div>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Manage Content -->
+        <div class="manage-content">
+            <!-- Filter and Search Section -->
+            <div class="manage-section fade-in">
+                <div class="filter-search-container">
+                    <div class="filter-group">
+                        <label class="filter-label">Filter by College</label>
+                        <select class="filter-select" id="collegeFilter" onchange="filterCertificates()">
+                            <option value="">All Colleges</option>
+                            <option value="Pune Institute of Computer Technology" selected>Pune Institute of Computer Technology</option>
+                            <option value="Mumbai University">Mumbai University</option>
+                            <option value="Delhi Technical University">Delhi Technical University</option>
+                            <option value="Bangalore Institute of Technology">Bangalore Institute of Technology</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="filter-label">Search Certificates</label>
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search by Name or ID" onkeyup="searchCertificates()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificates Table -->
+            <div class="certificates-table fade-in">
+                <h3 class="section-title">
+                    <i class="fas fa-list"></i>
+                    Certificates Uploaded
+                </h3>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Certificate ID</th>
+                                <th>Student Name</th>
+                                <th>College</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="certificatesTableBody">
+                            <tr>
+                                <td>1</td>
+                                <td>CERT2001</td>
+                                <td>Riya Patil</td>
+                                <td>Pune Institute of Computer Technology</td>
+                                <td>2025-09-01</td>
+                                <td><span class="status-badge status-verified">Verified</span></td>
+                                <td>
+                                    <button class="btn-action btn-view" onclick="viewCertificate('CERT2001')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-edit" onclick="editCertificate('CERT2001')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" onclick="deleteCertificate('CERT2001')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>CERT2002</td>
+                                <td>Dhruv Sharma</td>
+                                <td>Mumbai University</td>
+                                <td>2025-09-02</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td>
+                                    <button class="btn-action btn-view" onclick="viewCertificate('CERT2002')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-edit" onclick="editCertificate('CERT2002')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" onclick="deleteCertificate('CERT2002')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>CERT2003</td>
+                                <td>Anushka Singh</td>
+                                <td>Delhi Technical University</td>
+                                <td>2025-09-03</td>
+                                <td><span class="status-badge status-rejected">Rejected</span></td>
+                                <td>
+                                    <button class="btn-action btn-view" onclick="viewCertificate('CERT2003')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-edit" onclick="editCertificate('CERT2003')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" onclick="deleteCertificate('CERT2003')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>CERT2004</td>
+                                <td>Sarah Patel</td>
+                                <td>Pune Institute of Computer Technology</td>
+                                <td>2025-09-04</td>
+                                <td><span class="status-badge status-verified">Verified</span></td>
+                                <td>
+                                    <button class="btn-action btn-view" onclick="viewCertificate('CERT2004')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-edit" onclick="editCertificate('CERT2004')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" onclick="deleteCertificate('CERT2004')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>CERT2005</td>
+                                <td>Rakesh Kumar</td>
+                                <td>Bangalore Institute of Technology</td>
+                                <td>2025-09-05</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td>
+                                    <button class="btn-action btn-view" onclick="viewCertificate('CERT2005')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-action btn-edit" onclick="editCertificate('CERT2005')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-action btn-delete" onclick="deleteCertificate('CERT2005')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sample data for filtering and searching
+        const certificatesData = [
+            { id: 1, certId: 'CERT2001', name: 'Rohit Verma', college: 'Pune Institute of Computer Technology', date: '2025-09-01', status: 'verified' },
+            { id: 2, certId: 'CERT2002', name: 'Priya Sharma', college: 'Mumbai University', date: '2025-09-02', status: 'pending' },
+            { id: 3, certId: 'CERT2003', name: 'Amit Kumar', college: 'Delhi Technical University', date: '2025-09-03', status: 'rejected' },
+            { id: 4, certId: 'CERT2004', name: 'Kavita Joshi', college: 'Pune Institute of Computer Technology', date: '2025-09-04', status: 'verified' },
+            { id: 5, certId: 'CERT2005', name: 'Rajesh Patel', college: 'Bangalore Institute of Technology', date: '2025-09-05', status: 'pending' }
+        ];
+
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'uni_login.html';
+            }
+        }
+
+        // Filter certificates by college
+        function filterCertificates() {
+            const selectedCollege = document.getElementById('collegeFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            filterAndSearch(selectedCollege, searchTerm);
+        }
+
+        // Search certificates
+        function searchCertificates() {
+            const selectedCollege = document.getElementById('collegeFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            filterAndSearch(selectedCollege, searchTerm);
+        }
+
+        // Combined filter and search function
+        function filterAndSearch(college, searchTerm) {
+            const tbody = document.getElementById('certificatesTableBody');
+            const rows = tbody.getElementsByTagName('tr');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const cells = row.getElementsByTagName('td');
+                
+                if (cells.length > 0) {
+                    const studentName = cells[2].textContent.toLowerCase();
+                    const certId = cells[1].textContent.toLowerCase();
+                    const collegeName = cells[3].textContent;
+                    
+                    const matchesCollege = !college || collegeName === college;
+                    const matchesSearch = !searchTerm || 
+                        studentName.includes(searchTerm) || 
+                        certId.includes(searchTerm);
+                    
+                    if (matchesCollege && matchesSearch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            }
+        }
+
+        // View certificate
+        function viewCertificate(certId) {
+            alert(`Viewing certificate ${certId} - This functionality will be implemented`);
+        }
+
+        // Edit certificate
+        function editCertificate(certId) {
+            alert(`Edit certificate ${certId} - This functionality will be implemented`);
+        }
+
+        // Delete certificate
+        function deleteCertificate(certId) {
+            if (confirm(`Are you sure you want to delete certificate ${certId}?`)) {
+                // Find and remove the row
+                const rows = document.querySelectorAll('#certificatesTableBody tr');
+                rows.forEach(row => {
+                    const cells = row.getElementsByTagName('td');
+                    if (cells.length > 1 && cells[1].textContent === certId) {
+                        row.remove();
+                        showAlert(`Certificate ${certId} deleted successfully`, 'success');
+                    }
+                });
+            }
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${message}
+            `;
+            
+            const manageContent = document.querySelector('.manage-content');
+            manageContent.insertBefore(alertDiv, manageContent.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) && 
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

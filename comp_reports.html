@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics - CertSure / PramaanVault</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #228a97;
+            --accent-color: #e5f7da;
+            --secondary-color: #ffe766;
+            --dark-color: #2c3e50;
+            --light-color: #f8f9fa;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: linear-gradient(180deg, var(--primary-color) 0%, #1a6b75 100%);
+            color: white;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin: 0.5rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: var(--secondary-color);
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 12px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .user-role {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .btn-logout {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Reports Content */
+        .reports-content {
+            padding: 2rem;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filters-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(34, 138, 151, 0.25);
+            background: white;
+        }
+
+        .btn-filter {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-filter:hover {
+            background: #1a6b75;
+            transform: translateY(-2px);
+        }
+
+        .btn-export {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-export:hover {
+            background: #20c997;
+            transform: translateY(-2px);
+        }
+
+        /* Stats Cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .stat-card.verifications::before {
+            background: var(--info-color);
+        }
+
+        .stat-card.success::before {
+            background: var(--success-color);
+        }
+
+        .stat-card.failed::before {
+            background: var(--danger-color);
+        }
+
+        .stat-card.pending::before {
+            background: var(--warning-color);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-card.verifications .stat-icon {
+            background: var(--info-color);
+        }
+
+        .stat-card.success .stat-icon {
+            background: var(--success-color);
+        }
+
+        .stat-card.failed .stat-icon {
+            background: var(--danger-color);
+        }
+
+        .stat-card.pending .stat-icon {
+            background: var(--warning-color);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card.verifications .stat-number {
+            color: var(--info-color);
+        }
+
+        .stat-card.success .stat-number {
+            color: var(--success-color);
+        }
+
+        .stat-card.failed .stat-number {
+            color: var(--danger-color);
+        }
+
+        .stat-card.pending .stat-number {
+            color: var(--warning-color);
+        }
+
+        .stat-change {
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .stat-change.positive {
+            color: var(--success-color);
+        }
+
+        .stat-change.negative {
+            color: var(--danger-color);
+        }
+
+        /* Charts Section */
+        .charts-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .full-width-chart {
+            grid-column: 1 / -1;
+        }
+
+        .full-width-chart .chart-container {
+            height: 400px;
+        }
+
+        /* Data Table */
+        .data-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            background: var(--accent-color);
+            color: var(--primary-color);
+            font-weight: 600;
+            border: none;
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-color: #e9ecef;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(34, 138, 151, 0.05);
+            transform: translateX(5px);
+            transition: all 0.3s ease;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background: rgba(34, 138, 151, 0.02);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-success {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-failed {
+            background: rgba(220, 53, 69, 0.1);
+            color: var(--danger-color);
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: var(--warning-color);
+        }
+
+        /* Technology Icons */
+        .tech-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tech-icon {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--accent-color);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .tech-icon i {
+            font-size: 1.1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 100%;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .reports-content {
+                padding: 1rem;
+            }
+
+            .filters-row {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-icons {
+                justify-content: flex-start;
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">Verification Portal</div>
+            <div class="sidebar-subtitle">Government of Jharkhand</div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-item">
+                <a href="govt_admin.html" class="nav-link">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="govt_universities.html" class="nav-link">
+                    <i class="fas fa-building"></i>
+                    Universities
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="comp_blacklist.html" class="nav-link">
+                    <i class="fas fa-ban"></i>
+                    Blacklist
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="comp_reports.html" class="nav-link active">
+                    <i class="fas fa-chart-bar"></i>
+                    Reports
+                </a>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="govt_login.html" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <span class="header-title">Reports & Analytics</span>
+            </div>
+            <div class="header-user">
+                <div class="user-info">
+                    <div class="user-name">Government Admin</div>
+                    <div class="user-role">System Administrator</div>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Reports Content -->
+        <div class="reports-content">
+            <!-- Filters Section -->
+            <div class="filters-section fade-in">
+                <h3 class="section-title">
+                    <i class="fas fa-filter"></i>
+                    Report Filters
+                </h3>
+                
+                <div class="filters-row">
+                    <div>
+                        <label class="form-label">Date Range</label>
+                        <select class="form-select" id="dateRange">
+                            <option value="7">Last 7 days</option>
+                            <option value="30" selected>Last 30 days</option>
+                            <option value="90">Last 90 days</option>
+                            <option value="365">Last year</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="success">Success</option>
+                            <option value="failed">Failed</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">Certificate Type</label>
+                        <select class="form-select" id="certTypeFilter">
+                            <option value="">All Types</option>
+                            <option value="degree">Degree</option>
+                            <option value="diploma">Diploma</option>
+                            <option value="certificate">Certificate</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="form-label">University</label>
+                        <select class="form-select" id="orgFilter">
+                            <option value="">All Universities</option>
+                            <option value="university">University</option>
+                            <option value="college">College</option>
+                            <option value="institute">Institute</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button class="btn-filter" onclick="applyFilters()">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                    <button class="btn-export" onclick="exportReport()">
+                        <i class="fas fa-download me-2"></i>Export Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-row">
+                <div class="stat-card verifications fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="stat-label">Total Verifications</div>
+                    <div class="stat-number">2,847</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up me-1"></i>+12.5% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card success fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-label">Successful</div>
+                    <div class="stat-number">2,654</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up me-1"></i>+8.3% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card failed fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <div class="stat-label">Failed</div>
+                    <div class="stat-number">78</div>
+                    <div class="stat-change negative">
+                        <i class="fas fa-arrow-down me-1"></i>-15.2% from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card pending fade-in">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-number">115</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up me-1"></i>+5.7% from last month
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section fade-in">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-line"></i>
+                    Analytics Overview
+                </h3>
+                
+                <div class="charts-grid">
+                    <div>
+                        <div class="chart-title">Verification Trends</div>
+                        <div class="chart-container">
+                            <canvas id="verificationChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="chart-title">Success Rate</div>
+                        <div class="chart-container">
+                            <canvas id="successRateChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="full-width-chart">
+                        <div class="chart-title">Monthly Verification Analysis</div>
+                        <div class="chart-container">
+                            <canvas id="monthlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-section fade-in">
+                <h3 class="section-title">
+                    <i class="fas fa-table"></i>
+                    Recent Verifications
+                </h3>
+                
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Certificate ID</th>
+                                <th>Student Name</th>
+                                <th>University</th>
+                                <th>Status</th>
+                                <th>Processing Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024-01-15</td>
+                                <td>CERT-2024-001</td>
+                                <td>Riya Patil</td>
+                                <td>Jharkhand University</td>
+                                <td><span class="status-badge status-success">Success</span></td>
+                                <td>2.3s</td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-15</td>
+                                <td>CERT-2024-002</td>
+                                <td>Dhruv Sharma</td>
+                                <td>Tech Institute</td>
+                                <td><span class="status-badge status-success">Success</span></td>
+                                <td>1.8s</td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-14</td>
+                                <td>CERT-2024-003</td>
+                                <td>Anushka Singh</td>
+                                <td>Engineering College</td>
+                                <td><span class="status-badge status-failed">Failed</span></td>
+                                <td>3.2s</td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-14</td>
+                                <td>CERT-2024-004</td>
+                                <td>Sarah Patel</td>
+                                <td>Medical College</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>2024-01-13</td>
+                                <td>CERT-2024-005</td>
+                                <td>Rakesh Kumar</td>
+                                <td>Business School</td>
+                                <td><span class="status-badge status-success">Success</span></td>
+                                <td>2.1s</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar toggle for mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'govt_login.html';
+            }
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const dateRange = document.getElementById('dateRange').value;
+            const status = document.getElementById('statusFilter').value;
+            const certType = document.getElementById('certTypeFilter').value;
+            const org = document.getElementById('orgFilter').value;
+            
+            console.log('Filters applied:', { dateRange, status, certType, org });
+            alert('Filters applied successfully!');
+        }
+
+        // Export report
+        function exportReport() {
+            alert('Report exported successfully!');
+        }
+
+        // Initialize Charts
+        // Verification Trends Chart
+        const verificationCtx = document.getElementById('verificationChart').getContext('2d');
+        const verificationChart = new Chart(verificationCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Verifications',
+                    data: [120, 190, 300, 500, 200, 300, 450],
+                    borderColor: '#228a97',
+                    backgroundColor: 'rgba(34, 138, 151, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Success Rate Chart
+        const successRateCtx = document.getElementById('successRateChart').getContext('2d');
+        const successRateChart = new Chart(successRateCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Success', 'Failed', 'Pending'],
+                datasets: [{
+                    data: [93.2, 2.7, 4.1],
+                    backgroundColor: ['#28a745', '#dc3545', '#ffc107'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // Monthly Analysis Chart
+        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+        const monthlyChart = new Chart(monthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Successful',
+                    data: [1200, 1900, 1500, 2200, 1800, 2500, 2100, 2300, 2000, 2400, 2200, 2600],
+                    backgroundColor: '#28a745'
+                }, {
+                    label: 'Failed',
+                    data: [50, 80, 60, 90, 70, 100, 85, 95, 80, 90, 85, 95],
+                    backgroundColor: '#dc3545'
+                }, {
+                    label: 'Pending',
+                    data: [100, 120, 90, 110, 95, 130, 115, 125, 105, 120, 110, 135],
+                    backgroundColor: '#ffc107'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        stacked: false
+                    }
+                }
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) && 
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+

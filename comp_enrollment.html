@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Enrollment - CertSure / PramaanVault</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #228a97;
+            --accent-color: #e5f7da;
+            --secondary-color: #ffe766;
+            --dark-color: #2c3e50;
+            --light-color: #f8f9fa;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: rgba(34, 138, 151, 0.95);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0 0.5rem;
+        }
+
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-home {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-home:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .enrollment-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 3rem;
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .enrollment-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(135deg, var(--primary-color), #1a6b75);
+        }
+
+        .enrollment-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .enrollment-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), #1a6b75);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 10px 25px rgba(34, 138, 151, 0.3);
+        }
+
+        .enrollment-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .enrollment-subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* Form Styles */
+        .form-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(34, 138, 151, 0.25);
+            background: white;
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--danger-color);
+        }
+
+        .invalid-feedback {
+            color: var(--danger-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            width: 100%;
+        }
+
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(34, 138, 151, 0.25);
+            background: white;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 3px dashed var(--primary-color);
+            border-radius: 15px;
+            background: #E9F9E2;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-area:hover {
+            background: #D4F0D4;
+            border-color: #1a6b75;
+            transform: translateY(-2px);
+        }
+
+        .file-upload-area.dragover {
+            background: #B8E6B8;
+            border-color: #1a6b75;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover .upload-icon {
+            transform: scale(1.1);
+        }
+
+        .upload-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-choose-file {
+            background: linear-gradient(135deg, var(--primary-color), #1a6b75);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(34, 138, 151, 0.3);
+        }
+
+        .btn-choose-file:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(34, 138, 151, 0.4);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-info {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(34, 138, 151, 0.1);
+            border-radius: 8px;
+            color: var(--primary-color);
+            font-size: 0.85rem;
+        }
+
+        /* Terms and Conditions */
+        .terms-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .terms-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1rem;
+        }
+
+        .terms-content {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .form-check {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-check-input {
+            border: 2px solid #e9ecef;
+            border-radius: 4px;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .form-check-label {
+            color: #666;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        /* Submit Button */
+        .submit-actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--success-color), #20c997);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Back to Home */
+        .back-home {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .back-home a {
+            color: #666;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .back-home a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer h5 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+        }
+
+        .footer p {
+            margin-bottom: 0.5rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .footer a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--secondary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .enrollment-container {
+                margin: 1rem;
+                padding: 2rem;
+            }
+            
+            .enrollment-title {
+                font-size: 1.5rem;
+            }
+            
+            .form-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-shield-alt me-2"></i>CertSure / PramaanVault
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#help">Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html#contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn-home" href="index.html">
+                            <i class="fas fa-home me-2"></i>Back to Home
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="enrollment-container fade-in">
+                        <div class="enrollment-header">
+                            <div class="enrollment-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <h1 class="enrollment-title">Company Enrollment Request</h1>
+                            <p class="enrollment-subtitle">Join our certificate verification network</p>
+                        </div>
+
+                        <form id="enrollmentForm">
+                            <!-- Company Information -->
+                            <div class="form-container">
+                                <div class="form-group">
+                                    <label for="companyName" class="form-label">Company Name *</label>
+                                    <input type="text" class="form-control" id="companyName" placeholder="Enter company name" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="companyType" class="form-label">Company Type *</label>
+                                    <select class="form-select" id="companyType" required>
+                                        <option value="">Select company type</option>
+                                        <option value="private">Private Company</option>
+                                        <option value="public">Public Company</option>
+                                        <option value="government">Government University</option>
+                                        <option value="ngo">NGO</option>
+                                        <option value="startup">Startup</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="industry" class="form-label">Industry *</label>
+                                    <select class="form-select" id="industry" required>
+                                        <option value="">Select industry</option>
+                                        <option value="technology">Technology</option>
+                                        <option value="finance">Finance</option>
+                                        <option value="healthcare">Healthcare</option>
+                                        <option value="education">Education</option>
+                                        <option value="manufacturing">Manufacturing</option>
+                                        <option value="consulting">Consulting</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="employeeCount" class="form-label">Number of Employees *</label>
+                                    <select class="form-select" id="employeeCount" required>
+                                        <option value="">Select range</option>
+                                        <option value="1-10">1-10</option>
+                                        <option value="11-50">11-50</option>
+                                        <option value="51-200">51-200</option>
+                                        <option value="201-500">201-500</option>
+                                        <option value="500+">500+</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="website" class="form-label">Company Website</label>
+                                    <input type="url" class="form-control" id="website" placeholder="https://www.company.com">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="registrationNumber" class="form-label">Registration Number *</label>
+                                    <input type="text" class="form-control" id="registrationNumber" placeholder="Enter registration number" required>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <div class="form-container">
+                                <div class="form-group">
+                                    <label for="contactPerson" class="form-label">Contact Person *</label>
+                                    <input type="text" class="form-control" id="contactPerson" placeholder="Enter contact person name" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="designation" class="form-label">Designation *</label>
+                                    <input type="text" class="form-control" id="designation" placeholder="Enter designation" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" placeholder="Enter email address" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="phone" class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-control" id="phone" placeholder="Enter phone number" required>
+                                </div>
+                                
+                                <div class="form-group full-width">
+                                    <label for="address" class="form-label">Company Address *</label>
+                                    <textarea class="form-control" id="address" placeholder="Enter complete address" required></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Verification Requirements -->
+                            <div class="form-group">
+                                <label class="form-label">Verification Requirements *</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="backgroundCheck" required>
+                                    <label class="form-check-label" for="backgroundCheck">
+                                        Background verification of candidates
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="educationVerification" required>
+                                    <label class="form-check-label" for="educationVerification">
+                                        Educational qualification verification
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="experienceVerification" required>
+                                    <label class="form-check-label" for="experienceVerification">
+                                        Work experience verification
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Document Upload -->
+                            <div class="form-group">
+                                <label class="form-label">Required Documents *</label>
+                                <div class="file-upload-area" id="fileUploadArea">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <h5 class="upload-title">Upload Documents</h5>
+                                    <p class="upload-description">
+                                        Upload company registration, authorization letter, and other required documents
+                                    </p>
+                                    <button type="button" class="btn-choose-file" onclick="document.getElementById('fileInput').click()">
+                                        Choose Files
+                                    </button>
+                                    <input type="file" id="fileInput" class="file-input" multiple accept=".pdf,.jpg,.jpeg,.png">
+                                    <div class="upload-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Supported formats: PDF, JPG, PNG | Max size: 10MB per file
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Terms and Conditions -->
+                            <div class="terms-section">
+                                <h5 class="terms-title">Terms and Conditions</h5>
+                                <div class="terms-content">
+                                    <p>By submitting this enrollment request, you agree to:</p>
+                                    <ul>
+                                        <li>Use the certificate verification system in compliance with applicable laws</li>
+                                        <li>Maintain the confidentiality of verification data</li>
+                                        <li>Report any suspicious activities or fraudulent certificates</li>
+                                        <li>Pay applicable fees as per the government schedule</li>
+                                        <li>Comply with all government regulations and guidelines</li>
+                                        <li>Provide accurate and truthful information</li>
+                                        <li>Allow periodic audits of your verification activities</li>
+                                    </ul>
+                                    <p>The Government of Jharkhand reserves the right to approve or reject enrollment requests based on verification of provided information and compliance with requirements.</p>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                    <label class="form-check-label" for="agreeTerms">
+                                        I agree to the terms and conditions and understand the responsibilities
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="submit-actions">
+                                <button type="submit" class="btn-submit" id="submitBtn">
+                                    <i class="fas fa-paper-plane me-2"></i>Submit Enrollment Request
+                                </button>
+                            </div>
+
+                            <!-- Back to Home -->
+                            <div class="back-home">
+                                <a href="index.html">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Home
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <h5>CertSure / PramaanVault</h5>
+                <p>Certificate verification system</p>
+                <p>
+                    <i class="fas fa-envelope me-2"></i>verification@jharkhand.gov.in |
+                    <i class="fas fa-phone me-2"></i>Helpline: 0651-XXXX-XXXX
+                </p>
+                <p class="mt-3">&copy; 2024 Government of Jharkhand. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedFiles = [];
+
+        // File input change handler
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            selectedFiles = Array.from(e.target.files);
+            updateFileUploadArea();
+        });
+
+        // Drag and drop handlers
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        
+        fileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+
+        fileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+        });
+
+        fileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                selectedFiles = Array.from(files);
+                document.getElementById('fileInput').files = files;
+                updateFileUploadArea();
+            }
+        });
+
+        // Update file upload area
+        function updateFileUploadArea() {
+            if (selectedFiles.length > 0) {
+                const uploadTitle = fileUploadArea.querySelector('.upload-title');
+                uploadTitle.textContent = `Selected: ${selectedFiles.length} file(s)`;
+                uploadTitle.style.color = 'var(--success-color)';
+            }
+        }
+
+        // Form validation
+        function validateForm() {
+            const requiredFields = [
+                'companyName', 'companyType', 'industry', 'employeeCount',
+                'registrationNumber', 'contactPerson', 'designation', 'email', 'phone', 'address'
+            ];
+            
+            let isValid = true;
+            
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            // Check required checkboxes
+            const requiredCheckboxes = ['backgroundCheck', 'educationVerification', 'experienceVerification', 'agreeTerms'];
+            requiredCheckboxes.forEach(checkboxId => {
+                const checkbox = document.getElementById(checkboxId);
+                if (!checkbox.checked) {
+                    checkbox.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    checkbox.classList.remove('is-invalid');
+                }
+            });
+            
+            // Check file upload
+            if (selectedFiles.length === 0) {
+                alert('Please upload required documents');
+                isValid = false;
+            }
+            
+            return isValid;
+        }
+
+        // Form submission
+        document.getElementById('enrollmentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validateForm()) {
+                alert('Please fill in all required fields and upload documents');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Submitting...';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission
+            setTimeout(() => {
+                alert('Enrollment request submitted successfully! You will receive a confirmation email within 24 hours.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                // Reset form
+                document.getElementById('enrollmentForm').reset();
+                selectedFiles = [];
+                updateFileUploadArea();
+            }, 3000);
+        });
+
+        // Real-time validation
+        document.querySelectorAll('.form-control, .form-select').forEach(field => {
+            field.addEventListener('blur', function() {
+                if (this.hasAttribute('required') && !this.value.trim()) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        });
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.hasAttribute('required') && !this.checked) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Certificates - Recruiter</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --jharkhand-green: #66cc99;
+      --jharkhand-dark-green: #2e8b57;
+      --jharkhand-light-green: #d4f0d4;
+      --jharkhand-gold: #ffd700;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f8f9fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--jharkhand-green), var(--jharkhand-dark-green));
+      color: white;
+      padding: 12px 0;
+      border-bottom: 5px solid var(--jharkhand-gold);
+    }
+
+    .content-wrapper {
+      flex: 1;
+      display: flex;
+    }
+
+    .sidebar {
+      background: var(--jharkhand-dark-green);
+      min-height: 100%;
+      padding-top: 20px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 12px 20px;
+      text-decoration: none;
+      font-weight: 500;
+      border-left: 4px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background: var(--jharkhand-green);
+      border-left: 4px solid var(--jharkhand-gold);
+    }
+
+    .main-content {
+      padding: 25px;
+      flex: 1;
+    }
+
+    .upload-box {
+      border: 2px dashed var(--jharkhand-dark-green);
+      border-radius: 12px;
+      background: var(--jharkhand-light-green);
+      text-align: center;
+      padding: 40px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .upload-box.dragover {
+      background: #bff0c5;
+    }
+
+    .upload-box i {
+      font-size: 3rem;
+      color: var(--jharkhand-dark-green);
+    }
+
+    .footer {
+      background: linear-gradient(135deg, var(--jharkhand-dark-green), var(--jharkhand-green));
+      color: white;
+      padding: 15px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">CertSure - Recruiter | Upload Certificates</h4>
+      <span>Welcome, <strong>Recruiter</strong></span>
+    </div>
+  </div>
+
+  <!-- Sidebar + Main Content -->
+  <div class="content-wrapper">
+    <!-- Sidebar -->
+    <div class="col-md-3 col-lg-2 sidebar">
+      <a href="comp_dashboard.html"><i class="fas fa-tachometer-alt me-2"></i> Dashboard</a>
+      <a href="comp_upload.html" class="active"><i class="fas fa-upload me-2"></i> Upload Certificates</a>
+      <a href="comp_verification.html"><i class="fas fa-check-circle me-2"></i> Verification Results</a>
+      <a href="#"><i class="fas fa-history me-2"></i> History</a>
+      <a href="#"><i class="fas fa-cog me-2"></i> Settings</a>
+    </div>
+
+    <!-- Main -->
+    <div class="col-md-9 col-lg-10 main-content">
+      <h3 class="mb-4"><i class="fas fa-upload me-2"></i>Upload Certificates</h3>
+
+      <div class="upload-box" id="uploadBox">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <h5 class="mt-3">Upload Certificates</h5>
+        <p>Drag and drop candidate certificates here, or click to browse</p>
+        <input type="file" id="fileInput" multiple hidden>
+        <button class="btn btn-success" id="chooseFileBtn">Choose Files</button>
+        <p class="mt-2 text-muted">Supported formats: PDF, JPG, PNG | Max size: 10MB per file</p>
+      </div>
+
+      <!-- Uploaded files list -->
+      <div class="mt-4">
+        <h5>Selected Files:</h5>
+        <ul id="fileList" class="list-group"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+  </div>
+
+  <script>
+    const uploadBox = document.getElementById('uploadBox');
+    const fileInput = document.getElementById('fileInput');
+    const chooseFileBtn = document.getElementById('chooseFileBtn');
+    const fileList = document.getElementById('fileList');
+
+    chooseFileBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', handleFiles);
+
+    uploadBox.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadBox.classList.add('dragover');
+    });
+
+    uploadBox.addEventListener('dragleave', () => {
+      uploadBox.classList.remove('dragover');
+    });
+
+    uploadBox.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadBox.classList.remove('dragover');
+      handleFiles({ target: { files: e.dataTransfer.files } });
+    });
+
+    function handleFiles(event) {
+      const files = event.target.files;
+      fileList.innerHTML = '';
+
+      Array.from(files).forEach(file => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.textContent = file.name;
+
+        const size = (file.size / 1024 / 1024).toFixed(2);
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-secondary rounded-pill';
+        badge.textContent = `${size} MB`;
+        li.appendChild(badge);
+
+        fileList.appendChild(li);
+
+        console.log("Uploading:", file.name);
+      });
+    }
+  </script>
+</body>
+</html>
